@@ -1,0 +1,21 @@
+#wrapper {
+	margin: 0 auto;
+	width: 800px;
+	background-color: #eeeeee;
+	padding: 20px;
+	overflow: auto;
+	// necessary for "clearing" the floats
+	// contained within
+}
+
+img {
+	padding: 20px;
+	width: 320px;
+	margin: 10px;
+	float: left;
+}
+
+h1 {
+	font-family: Verdana, Geneva, sans-serif;
+	margin-left: 24px;
+}

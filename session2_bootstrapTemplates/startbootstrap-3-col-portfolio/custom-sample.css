@@ -1,0 +1,44 @@
+/* Body Styling properties example */
+body {
+	font-family: Garamond, ‘Book Antiqua’, Palatino, serif;
+	font-size: 16px;
+}
+
+h1 {
+	font-style: oblique;
+	font-size:48px;
+}
+
+h3 {
+	font-family: 'Franklin Gothic', sans-serif;
+	font-size:24px;
+}
+
+a {
+	color: #34576d;
+}
+
+a:hover {
+	color: #333333;
+}
+
+/* Navigation Bar styling */
+.navbar-inverse .navbar-brand {
+	color: #ffffff;
+	font-size: 28px;
+}
+
+.navbar-inverse {
+	background-color: #34576d;
+	border-color: #666666;
+	-moz-box-shadow: 2px 2px 7px #000;
+	-webkit-box-shadow: 2px 2px 7px #000;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+	color: #ffffff;
+}
+
+.navbar-inverse .navbar-nav>li>a:hover {
+	color: #999999;
+}
