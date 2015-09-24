@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Leaflet to CartoDB - Point Collection Tool Beta</title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <h1>Leaflet Data Collection Tool</h1>
+      </div>
+      <div id="map"></div>
+      <div id="controls">
+        <p>Click points for more information, or add your own.</br></p>
+        <input type="button" onclick="startEdits()" value="Click to Start Editing">
+        <input type="button" onclick="stopEdits()" value="Stop Your Editing Session"><br>
+        <div id="credits"><p>#webMapWorkshop - &copy;2015, Mike Foster</p></div>
+      </div>
+    </div>
+
+<!--
+    <div id="dialog" title="Point Information">     
+      <form>
+        <fieldset>
+          <label for="username">Your Name</label>
+          <input type="text" name="username" id="username" value="<your name>" class="text ui-widget-content ui-corner-all">
+          <label for="description">About this Point</label>
+          <input type="text" name="description" id="description" value="<description>" class="text ui-widget-content ui-corner-all">
+          <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+        </fieldset>
+      </form>
+    </div>
+-->
+
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>
+    // Create Leaflet map object
+    var map = L.map('map',{ center: [42.381899, -71.122499], zoom: 13});
+
+    // Add Tile Layer basemap
+    L.tileLayer('http://tiles.mapc.org/basemap/{z}/{x}/{y}.png', {
+      attribution: 'Tiles by <a href="http://mapc.org">MAPC</a>, Data by <a href="http://mass.gov/mgis">MassGIS</a>',
+      maxZoom: 17,
+      minZoom: 9
+    }).addTo(map);
+
+    // Your script will go here!
+   
+    </script>
+  </body>
+</html>

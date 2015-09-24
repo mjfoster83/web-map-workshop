@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet Map</title>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+	<style>
+		body {
+			margin: 0px;
+			font-family: 'Open Sans', Helvetica, sans-serif;
+		}
+
+		img {
+			float: left;
+			padding-right: 10px;
+		}
+
+		p {
+		    font-size: 15px;
+		    line-height: 25px;
+		}
+
+		h1 {
+			line-height: 60px;
+			margin-top: 0px;
+			margin-bottom: 0px;
+			font-weight: lighter;		
+		}
+
+		#wrapper {
+			width: 750px;
+		}
+
+		#map {
+			width: 750px;
+			margin: 0 auto;
+			height: 375px;
+		}
+
+		#controls {
+			width: 100%;
+			margin: 0 auto;
+		}
+
+		#header {
+			margin-top: 0px;
+			margin-bottom: 0px;
+		}
+
+		.legend {
+			line-height: 18px;
+			color: #333333;
+			padding: 6px 8px;
+			background: white;
+			background: rgba(255,255,255,0.8);
+			box-shadow: 0 0 15px rgba(0,0,0,0.2);
+			border-radius: 5px;
+		}
+
+		.legend i {
+			width: 18px;
+			height: 18px;
+			float: left;
+			margin-right: 18px;
+			opacity: 0.7;
+		}
+
+		.legend img {
+			width: 18px;
+			height: 18px;
+			float: left;
+		}
+
+		.legend p {
+			font-size: 12px;
+			line-height: 18px;
+			margin: 0;
+		}
+
+		#credits p {
+			margin-top: 5px;
+			font-size: 12px;
+			text-align: right;
+			line-height: 16px;
+		}
+	</style>
+</head>
+<body>
+	<!-- Our web map and content will go here -->
+	<div id="wrapper">
+		<div id="header">
+			<h1><img src="images/map-logo.png" alt="Clipboard Logo" style="height: 60px; width: 60px;">Rodent Violations - Cambridge, Mass.</h1>
+		</div>
+		<div id="map"></div>
+		<div id="controls">
+			<div id="credits"><p>Violations cited by Housing Inpectors from March to Sept 2014. Data from <a href="https://data.cambridgema.gov/">Cambridge Open Data</a><br>#webMapWorkshop - &copy;2015, Mike Foster</p></div>
+		</div>
+	</div>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script>
+		// Create Map Object
+		var map = L.map('map',{ center: [42.376773,-71.111670], zoom: 13 });
+
+		// Add Tile Layer from MAPC and MassGIS
+		L.tileLayer('http://tiles.mapc.org/basemap/{z}/{x}/{y}.png', {
+			attribution: 'Tiles by <a href="http://mapc.org">MAPC</a>, Data by <a href="http://mass.gov/mgis">MassGIS</a>',
+			maxZoom: 17,
+			minZoom: 9
+		}).addTo(map);
+
+		// Add Rodent Violation GeoJSON Data
+		// Null variable that will hold rodent violation data
+		var violationPoints = null;
+
+		// Get GeoJSON and put on it on the map when it loads
+		$.getJSON("data/rodent_violations.geojson",function(data){
+			// set coffeeShops to GeoJSON, add GeoJSON layer to the map once the file is loaded
+			violationPoints = L.geoJson(data,{
+				onEachFeature: function (feature, layer) {
+					layer.bindPopup(feature.properties.address);
+				}, pointToLayer: function (feature, latlng) {
+					if (feature.properties.status == "Cited"){
+					var marker = L.marker(latlng,{icon: citedIcon});
+					} else {
+					var marker = L.marker(latlng,{icon: correctedIcon});
+					};
+					return marker;
+		        }
+			}).addTo(map);
+		});
+
+		// Create Custom Icons Here
+		// Icon Class
+		var RodentIcon = L.Icon.extend({
+			options:{
+				shadowUrl: 'images/rodent_shadow.png',
+				iconSize: [36,36],
+				shadowSize: [36,36],
+				iconAnchor: [18,18],
+				shadowAnchor: [18,18],
+				popupAnchor: [0,-6]
+			}
+		});
+
+		// Create specific icons
+		var citedIcon = new RodentIcon({iconUrl: 'images/rodent_open.png'});
+		var correctedIcon = new RodentIcon({iconUrl: 'images/rodent.png'});
+
+		// Null variable that will hold neighborhoods layer
+		var neighborhoodsLayer = null;
+
+		// Add Neighborhood Polygons
+		$.getJSON("data/cambridge_neighborhoods.geojson",function(data){
+			neighborhoodsLayer = L.geoJson(data, {style: style}).addTo(map);
+		});
+
+				// Set function for color ramp
+		function setColor(density){
+			return density > 85 ? '#a50f15' :
+			       density > 15 ? '#de2d26' :
+			       density > 8 ? '#fb6a4a' :
+			       density > 4 ? '#fcae91' :
+			                     '#fee5d9';
+		};
+
+		// Set style function that sets fill color property equal to rodent density
+		function style(feature) {
+		    return {
+		        fillColor: setColor(feature.properties.rodentDensity),
+		        fillOpacity: 0.7,
+		        weight: 2,
+		        opacity: 1,
+		        color: '#ffffff',
+		        dashArray: '3'
+		    };
+		}
+
+		// Create Leaflet Control Object for Legend
+		var legend = L.control({position: 'topright'});
+
+		// Function that runs when legend is added to map
+		legend.onAdd = function (map) {
+
+			// Create Div Element and Populate it with HTML
+			var div = L.DomUtil.create('div', 'legend');		    
+			div.innerHTML += '<b>Violation Density</b><br />';
+			div.innerHTML += 'by Neighborhood<br />';
+			div.innerHTML += '<small>Violations/Sq. Mi.</small><br />';  
+			div.innerHTML += '<i style="background: #a50f15"></i><p>85+</p>';
+			div.innerHTML += '<i style="background: #de2d26"></i><p>15-85</p>';
+			div.innerHTML += '<i style="background: #fb6a4a"></i><p>8-15</p>';
+			div.innerHTML += '<i style="background: #fcae91"></i><p>4-8</p>';
+			div.innerHTML += '<i style="background: #fee5d9"></i><p>0-4</p>';
+			div.innerHTML += '<hr>Individual Violations';
+			div.innerHTML += '<br /><img src="images/rodent_open.png">Cited';
+			div.innerHTML += '<br /><img src="images/rodent.png">Corrected';
+
+			// Return the Legend div containing the HTML content
+			return div;
+		};
+
+		// Add Legend to Map
+		legend.addTo(map);
+
+		// Add Scale Bar to Map
+		L.control.scale({position: 'bottomleft'}).addTo(map);
+	</script>
+</body>
+</html>

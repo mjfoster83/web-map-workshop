@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet Map</title>
+	<!-- External Stylesheets -->
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+</head>
+<body>
+	<!-- Our web map and content will go here -->
+	<div id="map" style="width: 705px; height: 375px"></div>
+	<!-- Add the Leaflet JavaScript library -->
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script>
+    	// Create variable to hold map element, give initial settings to map
+    	var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14});
+
+    	// Add OpenStreetMap tile layer to map element
+		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
+
+		// Create point feature for Kendall Square T Station
+		var myDataPoint = L.marker([42.362432, -71.086086]).addTo(map);
+
+		// Create line feature for Mass Ave Bridge, style and add to map
+		var myDataLine = L.polyline([[42.357227, -71.092631], [42.351411, -71.089723]],
+			{color: 'red', weight: 10}).addTo(map);
+
+		// Create area feature for MIT, style and add to map
+		var myArea = L.polygon([[42.353770, -71.103606], [42.355447, -71.104475],
+		    [42.362681, -71.089830], [42.361829, -71.079230]], 
+		    {color: 'blue', weight: 4}).addTo(map);
+
+        // Bind popup to data point object
+        myDataPoint.bindPopup("<h3>Kendall Square</h3><p>Cambridge, MA<br>Information about Kendall Square.</p>");
+        // Bind popup to line object
+        myDataLine.bindPopup("Mass Ave Bridge");
+        // Bind popup to area object
+        myArea.bindPopup("MIT Campus");
+
+        // Create an Empty Popup
+        var popup = L.popup();
+         
+        // Write function to set Properties of the Popup
+        function onMapClick(e) {
+            popup
+                .setLatLng(e.latlng)
+                .setContent("You clicked the map at " + e.latlng.toString())
+                .openOn(map);
+        }
+         
+        // Listen for a click event on the Map element
+        map.on('click', onMapClick);
+
+        // load GeoJSON from an external file
+		$.getJSON("data/coffee_cafes.geojson",function(data){
+		    // add GeoJSON layer to the map once the file is loaded
+		    L.geoJson(data,{
+				onEachFeature: function (feature, layer) {
+					layer.bindPopup(feature.properties.name);
+				}
+			}).addTo(map);
+		});
+	</script>
+</body>
+</html>

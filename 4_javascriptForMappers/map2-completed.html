@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet Map</title>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<style>
+		#controls {
+	    	float: left;
+			position: relative;
+		}
+	</style>
+</head>
+<body>
+	<!-- Our web map and content will go here -->
+	<div id="map" style="width: 705px; height: 375px"></div>
+	<div id="controls" style="margin: 15px;">
+		<button id="addButton">Show All Coffee Shops</button>
+		<button id="removeButton">Hide All Coffee Shops</button>
+		<button id="toggleButton">Toggle All Coffee Shops</button>
+		<button id="filterSBux">Starbucks</button>
+		<button id="filterDD">Dunkin Donuts</button>
+	</div>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	<script>
+    	// Web map code goes here
+    	var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14 });
+    	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
+
+		// Null variable that will hold our data
+		var coffeeShopPoints = null;
+
+		// Function to add coffee shops
+		function addCoffeeShops(){
+			$.getJSON("data/coffee_cafes.js",function(data){
+			    // set coffeeShops to GeoJSON, add GeoJSON layer to the map once the file is loaded
+			    coffeeShopPoints = L.geoJson(data,{
+					onEachFeature: function (feature, layer) {
+						layer.bindPopup(feature.properties.name);
+					}
+				}).addTo(map);
+			});
+		};
+
+		// Function to remove coffee shops
+		function removeCoffeeShops(){
+			map.removeLayer(coffeeShopPoints);
+		};
+
+		// Function to toggle coffee shops
+		function toggleCoffeeShops(){
+			if(map.hasLayer(coffeeShopPoints)){
+				removeCoffeeShops();
+			} else {
+				addCoffeeShops();
+			}
+		};
+
+		// Use $( "elementID") and the jQuery click listener method to add on the add button
+		$( "#addButton" ).click(function() {
+			addCoffeeShops();
+		});
+
+		// Use $( "elementID") and the jQuery click listener method to remove on the remove button
+		$( "#removeButton" ).click(function() {
+			removeCoffeeShops();
+		});
+
+		// Use $( "elementID") and the jQuery click listener method to toggle on the toggle button
+		$( "#toggleButton" ).click(function() {
+			toggleCoffeeShops();
+		});
+
+		// Use $( "elementID") and the jQuery click listener method filter Starbucks
+		$( "#filterSBux" ).click(function() {
+			removeCoffeeShops();
+		    $.getJSON("data/coffee_cafes.js",function(data){
+		        // add GeoJSON layer to the map once the file is loaded
+		        coffeeShopPoints = L.geoJson(data,{
+					onEachFeature: function (feature, layer) {
+						layer.bindPopup(feature.properties.name);
+					}, filter: function (feature, layer) {
+						return feature.properties.name == "Starbucks";
+					}
+				}).addTo(map);
+		    });
+		});
+
+		// Use $( "elementID") and the jQuery click listener method filter Starbucks
+		$( "#filterDD" ).click(function() {
+			removeCoffeeShops();
+		    $.getJSON("data/coffee_cafes.js",function(data){
+		        // add GeoJSON layer to the map once the file is loaded
+		        coffeeShopPoints = L.geoJson(data,{
+					onEachFeature: function (feature, layer) {
+						layer.bindPopup(feature.properties.name);
+					}, filter: function (feature, layer) {
+						return feature.properties.name == "Dunkin' Donuts";
+					}
+				}).addTo(map);
+		    });
+		});
+	</script>
+</body>
+</html>

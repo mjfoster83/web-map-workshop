@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Leaflet to CartoDB - Point Collection Tool Beta</title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <h1>Leaflet Data Collection Tool</h1>
+      </div>
+      <div id="map"></div>
+      <div id="controls">
+        <p>Click points for more information, or add your own.</br></p>
+        <input type="button" onclick="startEdits()" value="Click to Start Editing">
+        <input type="button" onclick="stopEdits()" value="Stop Your Editing Session"><br>
+        <div id="credits"><p>#webMapWorkshop - &copy;2015, Mike Foster</p></div>
+      </div>
+    </div>
+
+    <div id="dialog" title="Point Information">     
+      <form>
+        <fieldset>
+          <label for="username">Your Name</label>
+          <input type="text" name="username" id="username" value="<your name>" class="text ui-widget-content ui-corner-all">
+          <label for="description">About this Point</label>
+          <input type="text" name="description" id="description" value="<description>" class="text ui-widget-content ui-corner-all">
+          <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+        </fieldset>
+      </form>
+    </div>
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>
+    // Create Leaflet map object
+    var map = L.map('map',{ center: [42.381899, -71.122499], zoom: 13});
+
+    // Add Tile Layer basemap
+    L.tileLayer('http://tiles.mapc.org/basemap/{z}/{x}/{y}.png', {
+      attribution: 'Tiles by <a href="http://mapc.org">MAPC</a>, Data by <a href="http://mass.gov/mgis">MassGIS</a>',
+      maxZoom: 17,
+      minZoom: 9
+    }).addTo(map);
+
+    // Declare Variables
+    // Create Global Variable to hold CartoDB points
+    var cartoDBPoints = null;
+
+    // Set your CartoDB Username
+    var cartoDBUsername = "{your CartoDB username}";
+
+    // Write SQL Selection Query to be Used on CartoDB Table
+    // Name of table is 'data_collector'
+    var sqlQuery = "SELECT * FROM data_collector";
+
+    // Create variable for Leaflet.draw features
+    var drawnItems = new L.FeatureGroup();
+
+    // Get CartoDB selection as GeoJSON and Add to Map
+    function getGeoJSON(){
+      $.getJSON("https://"+cartoDBUsername+".cartodb.com/api/v2/sql?format=GeoJSON&q="+sqlQuery, function(data) {
+        cartoDBPoints = L.geoJson(data,{
+          pointToLayer: function(feature,latlng){
+            var marker = L.marker(latlng);
+            marker.bindPopup('<p>' + feature.properties.description + '<br /><em>Submitted by </em>' + feature.properties.name + '</p>');
+            return marker;
+          }
+        }).addTo(map);
+      });
+    };
+
+    // Run showAll function automatically when document loads
+    $( document ).ready(function() {
+      getGeoJSON();
+    });
+
+    var drawControl = new L.Control.Draw({
+      draw : {
+        polygon : false,
+        polyline : false,
+        rectangle : false,
+        circle : false
+      },
+      edit : false,
+      remove: false
+    });
+
+    var controlOnMap = false;
+
+    function startEdits(){
+      if(controlOnMap == true){
+        map.removeControl(drawControl);
+        controlOnMap = false;
+      }
+      map.addControl(drawControl);
+      controlOnMap = true;
+    };
+
+    function stopEdits(){
+      map.removeControl(drawControl);
+      controlOnMap = false;
+    };
+
+    map.on('draw:created', function (e) {
+        var layer = e.layer;
+
+        map.addLayer(drawnItems);
+        drawnItems.addLayer(layer);
+
+        dialog.dialog( "open" );
+    });
+
+    var submitToProxy = function(q){
+      $.post("php/callProxy.php", { //Put path to your PHP file here
+        qurl:q,
+        cache: false,
+        timeStamp: new Date().getTime()
+      }, function(data) {
+        console.log(data);
+        refreshLayer();
+      });
+    };
+
+    dialog = $( "#dialog" ).dialog({
+      autoOpen: false,
+      height: 300,
+      width: 350,
+      modal: true,
+      position: {
+        my: "center center",
+        at: "center center",
+        of: "#map"
+      },
+      buttons: {
+        "Add to Database": setData,
+        Cancel: function() {
+          dialog.dialog("close");
+          map.removeLayer(drawnItems);
+        }
+      },
+      close: function() {
+        form[ 0 ].reset();
+        console.log("Dialog closed");
+      }
+    });
+
+    form = dialog.find( "form" ).on( "submit", function( event ) {
+      event.preventDefault();
+      setData();
+    });
+ 
+    function setData() {
+      var enteredUsername = username.value;
+      var enteredDescription = description.value;
+      drawnItems.eachLayer(function (layer) {
+        var sql = "INSERT INTO data_collector (the_geom, description, name, latitude, longitude) VALUES (ST_SetSRID(ST_GeomFromGeoJSON('";
+        var a = layer.getLatLng();
+        console.log(a);
+        var sql2 ='{"type":"Point","coordinates":[' + a.lng + "," + a.lat + "]}'),4326),'" + enteredDescription + "','" + enteredUsername + "','" + a.lat + "','" + a.lng +"')";
+        var pURL = sql+sql2;
+        console.log(pURL);
+        submitToProxy(pURL);
+        console.log("Feature has been submitted to the Proxy");
+      });
+      map.removeLayer(drawnItems);
+      drawnItems = new L.FeatureGroup();
+      console.log("drawnItems has been cleared");
+      dialog.dialog("close");
+    };
+
+    function refreshLayer() {
+      if (map.hasLayer(cartoDBPoints)) {
+        map.removeLayer(cartoDBPoints);
+      };
+      getGeoJSON();
+    };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet Map</title>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+</head>
+<body>
+	<!-- Our web map and content will go here -->
+	<div id="map" style="width: 715px; height: 375px"></div>
+	<div id="controls" style="margin: 15px;">
+		Our Buttons Will Go Here
+	</div>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script>
+    	// Web map code goes here
+    	var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14 });
+    	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
+
+    	map.doubleClickZoom.disable();
+
+		var coffeeShops = {
+			"type": "FeatureCollection",
+			"features": [
+				{
+					"type": "Feature",
+					"properties": {
+						"name": "Dunkin Donuts",
+						"address": "1 Broadway #1, Cambridge, MA 02142",
+		                                "latitude": 42.362504,
+						"longitude": -71.083372
+					},
+					"geometry": {
+						"type": "Point",
+						"coordinates": [-71.083372, 42.362504]
+					}
+				},
+				{
+					"type": "Feature",
+					"properties": {
+						"name": "Starbucks",
+						"address": "6 Cambridge Center, Cambridge, MA 02142",
+		                                "latitude": 42.363884,
+						"longitude": -71.087749
+					},
+					"geometry": {
+						"type": "Point",
+						"coordinates": [-71.087749, 42.363884]
+					}
+				}
+			]
+		};
+
+		L.geoJson(coffeeShops, {
+			onEachFeature: function (feature, layer) {
+				layer.bindPopup(feature.properties.name);
+			}
+		}).addTo(map);
+
+
+	</script>
+</body>
+</html>

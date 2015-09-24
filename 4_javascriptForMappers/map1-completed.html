@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet Map</title>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<style>
+		#controls {
+	    	float: left;
+			position: relative;
+		}
+	</style>
+</head>
+<body>
+	<!-- Our web map and content will go here -->
+	<div id="map" style="width: 705px; height: 375px"></div>
+	<div id="controls" style="margin: 15px;">
+		<button id="addButton">Show All Coffee Shops</button>
+		<button id="removeButton">Hide All Coffee Shops</button>
+		<button id="toggleButton">Toggle All Coffee Shops</button>
+		<button id="filterSBux">Starbucks</button>
+		<button id="filterDD">Dunkin Donuts</button>
+	</div>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script>
+    	// Web map code goes here
+    	var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14 });
+    	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
+
+    	map.doubleClickZoom.disable();
+
+		var coffeeShops = {
+			"type": "FeatureCollection",
+			"features": [
+				{
+					"type": "Feature",
+					"properties": {
+						"name": "Dunkin Donuts",
+						"address": "1 Broadway #1, Cambridge, MA 02142",
+		                                "latitude": 42.362504,
+						"longitude": -71.083372
+					},
+					"geometry": {
+						"type": "Point",
+						"coordinates": [-71.083372, 42.362504]
+					}
+				},
+				{
+					"type": "Feature",
+					"properties": {
+						"name": "Starbucks",
+						"address": "6 Cambridge Center, Cambridge, MA 02142",
+		                                "latitude": 42.363884,
+						"longitude": -71.087749
+					},
+					"geometry": {
+						"type": "Point",
+						"coordinates": [-71.087749, 42.363884]
+					}
+				}
+			]
+		};
+
+		var coffeeShopPoints = null;
+
+		document.getElementById("addButton").addEventListener("click", addCoffeeShops);
+
+		function addCoffeeShops() {
+			coffeeShopPoints = L.geoJson(coffeeShops, {
+				onEachFeature: function (feature, layer) {
+					layer.bindPopup(feature.properties.name);
+				}
+			}).addTo(map);
+		};
+
+		document.getElementById("removeButton").addEventListener("click", removeCoffeeShops);
+
+		function removeCoffeeShops() {
+		    map.removeLayer(coffeeShopPoints);
+		};
+
+		document.getElementById("toggleButton").addEventListener("click", toggleCoffeeShops);
+
+		function toggleCoffeeShops(){
+			if(map.hasLayer(coffeeShopPoints)){
+				removeCoffeeShops();
+			} else {
+				addCoffeeShops();
+			}
+		};
+
+		document.getElementById("filterSBux").addEventListener("click", filterSBux);
+
+		function filterSBux(){
+			removeCoffeeShops();
+		    coffeeShopPoints = L.geoJson(coffeeShops,{
+				onEachFeature: function (feature, layer) {
+					layer.bindPopup(feature.properties.name);
+				}, filter: function (feature, layer) {
+					return feature.properties.name == "Starbucks";
+				}
+			}).addTo(map);
+		}
+
+		document.getElementById("filterDD").addEventListener("click", filterDD);
+
+		function filterDD(){
+			removeCoffeeShops();
+		    coffeeShopPoints = L.geoJson(coffeeShops,{
+				onEachFeature: function (feature, layer) {
+					layer.bindPopup(feature.properties.name);
+				}, filter: function (feature, layer) {
+					return feature.properties.name == "Dunkin Donuts";
+				}
+			}).addTo(map);
+		}
+
+
+	
+	</script>
+</body>
+</html>

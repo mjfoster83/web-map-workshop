@@ -1,0 +1,60 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+body {
+  margin: 0px;
+  font-family: 'Open Sans', Helvetica, sans-serif;
+}
+
+img {
+  float: left;
+  padding-right: 10px;
+}
+
+p {
+  font-size: 15px;
+  line-height: 25px;
+}
+
+h1 {
+  line-height: 60px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-weight: lighter;
+}
+
+#wrapper {
+  width: 750px;
+}
+
+#map {
+  width: 750px;
+  margin: 0 auto;
+  height: 375px;
+}
+
+#controls {
+  width: 100%;
+  margin: 0 auto;
+  float: left;
+}
+
+#form {
+  margin-top: 5px;
+  font-size: 12px;
+  text-align: left;
+  line-height: 16px;
+  width:375px;
+  float: left;
+}
+
+#header {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+#credits p {
+  margin-top: 5px;
+  font-size: 12px;
+  text-align: right;
+  line-height: 16px;
+}

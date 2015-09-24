@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet Map</title>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+</head>
+<body>
+	<!-- Our web map and content will go here -->
+	<div id="map" style="width: 705px; height: 375px"></div>
+	<div id="controls" style="margin: 15px;">
+		Our Buttons Will Go Here
+	</div>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script>
+    	// Create web map object
+    	var map = L.map('map',{
+    		center: [42.362432, -71.086086],
+    		zoom: 14 }
+    	);
+
+    	// Add tile layer for Open Street Map to map object
+    	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
+
+
+
+	</script>
+</body>
+</html>
