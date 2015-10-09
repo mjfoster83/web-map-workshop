@@ -45,10 +45,11 @@
     var map = L.map('map',{ center: [42.381899, -71.122499], zoom: 13});
 
     // Add Tile Layer basemap
-    L.tileLayer('http://tiles.mapc.org/basemap/{z}/{x}/{y}.png', {
-      attribution: 'Tiles by <a href="http://mapc.org">MAPC</a>, Data by <a href="http://mass.gov/mgis">MassGIS</a>',
-      maxZoom: 17,
-      minZoom: 9
+    L.tileLayer('http://a{s}.acetate.geoiq.com/tiles/acetate-hillshading/{z}/{x}/{y}.png', {
+      attribution: '&copy;2012 Esri & Stamen, Data from OSM and Natural Earth',
+      subdomains: '0123',
+      minZoom: 2,
+      maxZoom: 18
     }).addTo(map);
 
     // Your script will go here!
