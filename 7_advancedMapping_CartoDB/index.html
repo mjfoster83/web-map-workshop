@@ -47,9 +47,8 @@
     var map = L.map('map',{ center: [42.381899, -71.122499], zoom: 13});
 
     // Add Tile Layer basemap
-    L.tileLayer('http://a{s}.acetate.geoiq.com/tiles/acetate-hillshading/{z}/{x}/{y}.png', {
-      attribution: '&copy;2012 Esri & Stamen, Data from OSM and Natural Earth',
-      subdomains: '0123',
+    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       minZoom: 2,
       maxZoom: 18
     }).addTo(map);
