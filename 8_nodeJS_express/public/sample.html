@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<!-- we need to put everything inside of an html tag. -->
+<!-- What is this thing?! This is a comment! it doesn't do anything and allows me to write secret notes to other people who look at the html document. This is just our little secret note. -->
+<head>
+	<!-- Generally speaking, the head part of an html document is for information about this document. the body is for the content you want to show. -->
+	<title>HELLO MY NAME IS HTML</title>
+	<!-- the "title" tag is the thing that is displayed on the tab, and it's what a bookmark to this page will be named by default. -->
+	<link href="style.css" rel="stylesheet">
+	<style>
+		html {
+			font-family: Georgia, Times, serif;
+			font-size: 24px;
+			line-height: 32px;
+		}
+		a {
+			color: orange;
+		}
+		a:hover {
+			color: red;
+		}
+		p {
+			background-color: #dddddd;
+			padding: 20px;
+			width: 320px;
+			margin: 10px;
+			float: left;
+			// float allows us to flexibly stack items
+			// in multiple columns
+		}
+	</style>
+</head>
+<body>
+	<!-- most of the important things go inside the body tag -->
+	<div id="wrapper">
+		<h1>Welcome to my Webpage!</h1>
+		<p>This is my first webpage! I created it during IAP 2015.</p>
+		<p>This is my second paragraph. So much things. <a href="http://dusp.mit.edu">Take me to DUSP.</a></p>
+	</div>
+</body>
+</html>

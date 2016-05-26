@@ -1,0 +1,17 @@
+extends layout
+block content
+    form(action='/filter', method='get')
+        input(type='text', name='name')
+    #map
+    script.
+        var myData = !{JSON.stringify(jsonData)};
+        // Create variable to hold map element, give initial settings to map
+        var map = L.map('map',{ center: [42.375562, -71.106870], zoom: 14});
+        // Add OpenStreetMap tile layer to map element
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
+        // Add JSON to map
+        L.geoJson(myData,{
+            onEachFeature: function (feature, layer) {
+                layer.bindPopup(feature.properties.f2);
+            }
+        }).addTo(map);
