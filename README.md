@@ -2,15 +2,25 @@
 
 [Web Map Workshop](http://duspviz.mit.edu/web-map-workshop/)
 
-This series of workshops introduces the fundamentals of web mapping through a technical, tutorial-based lens that is designed to complement your other coursework and project work at DUSP. The workshop series will use a variety of modern tools and techniques, starting with introducing web programming basics and website fundamentals, then introduce a web mapping library called Leaflet that utilizes HTML, CSS, and Javascript to display spatial data and create rich, interactive map experiences.
+This is a series of workshops introducing the fundamentals of web programming and webmapping through a technical, tutorial-based paradigm. The workshop series will use a variety of modern tools and techniques, starting with introducing web programming basics and website fundamentals, then introduce a web mapping library called Leaflet that utilizes HTML, CSS, and Javascript to display spatial data and create rich, interactive map experiences.
 
-The workshops are organized into nine modular sessions, but are designed best to be taken in a sequence. All sessions can be completed on your laptop machine or on a cron workstation, and software is generally free and easy to install, with the exception of some license-based Adobe Creative Suite software.
+The workshops are organized into modular sessions, but are best taken in sequence. Technologies introduced and covered:
+
+- JavaScript
+- HTML
+- CSS
+- Leaflet
+- NodeJS
+- PHP
+- PostGIS/SQL
+- ExpressJS
+- Web Servers with Python and XAMPP
 
 This workshop series is designed for beginners and contains no required prerequisites outside of a desire to improve your coding skills and learn how to utilize web development and programming to make web-based maps. A basic understanding of modern website design and structure using HTML, CSS, and Javascript is helpful, but not necessary. We will cover alot of the basics in the first couple of sessions.
 
-Examples for all of the sessions can be found in this repository.
+Examples, code, and data, for all of the sessions can be found in this repository.
 
-Each workshop is modular and designed to stand independently as a resource online. See below for the session topics, tutorials, and materials.
+See below for the session topics, tutorials, and materials.
 
 ## Workshops
 
