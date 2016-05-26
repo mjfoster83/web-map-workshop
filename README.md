@@ -38,4 +38,4 @@ See below for the session topics, tutorials, and materials.
 
 7 - [Advanced Mapping: Data Collection with PHP and the CartoDB API](http://duspviz.mit.edu/web-map-workshop/cartodb-data-collection/)
 
-8 - [Advanced Mapping: Leaflet with PostGIS/NodeJS/Express](http://duspviz.mit.edu/web-map-workshop/cartodb-data-collection/)
+8 - [Advanced Mapping: Leaflet with PostGIS/NodeJS/Express](http://duspviz.mit.edu/web-map-workshop/leaflet_nodejs_postgis/)
