@@ -1,7 +1,11 @@
 extends layout
 block content
-    form(action='/filter', method='get')
-        input(type='text', name='name')
+    form(action='/filter')
+        select(name='name')
+            option(disabled='', selected='', value='') Select One...
+            option(value='Starbucks') Starbucks
+            option(value='1369 Coffee House') 1369 Coffee House
+        input(type='submit', value='Submit')
     #map
     script.
         var myData = !{JSON.stringify(jsonData)};
