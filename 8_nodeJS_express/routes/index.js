@@ -54,21 +54,24 @@ router.get('/filter*', function (req, res) {
     if (name.indexOf("--") > -1 || name.indexOf("'") > -1 || name.indexOf(";") > -1 || name.indexOf("/*") > -1 || name.indexOf("xp_") > -1){
         console.log("Bad request detected");
         res.redirect('/map');
-    }
-    var filter_query = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As geometry, row_to_json((id, name)) As properties FROM cambridge_coffee_shops As lg WHERE lg.name = \'" + name + "\') As f) As fc";
-    var client = new pg.Client(conString);
-    client.connect();
-    var query = client.query(filter_query);
-    query.on("row", function (row, result) {
-        result.addRow(row);
-    });
-    query.on("end", function (result) {
-        var data = result.rows[0].row_to_json
-        res.render('map', {
-            title: "Express API",
-            jsonData: data
+        return;
+    } else {
+        console.log("Request passed")
+        var filter_query = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As geometry, row_to_json((id, name)) As properties FROM cambridge_coffee_shops As lg WHERE lg.name = \'" + name + "\') As f) As fc";
+        var client = new pg.Client(conString);
+        client.connect();
+        var query = client.query(filter_query);
+        query.on("row", function (row, result) {
+            result.addRow(row);
         });
-    });
+        query.on("end", function (result) {
+            var data = result.rows[0].row_to_json
+            res.render('map', {
+                title: "Express API",
+                jsonData: data
+            });
+        });
+    };
 });
 
 
