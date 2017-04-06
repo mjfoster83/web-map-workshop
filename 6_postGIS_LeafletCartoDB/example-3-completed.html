@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cambridge Coffee Shops</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <h1>Caffeinated Cambridge</h1>
+      </div>
+      <div id="map"></div>
+      <div id="controls">
+        <div id="form">
+          <p>Click on the map to find the five closest coffee shops to that location</p>
+          <form action="">
+            <input type="button" onclick="showAll()" value="Reset Map">
+            <input type="button" onclick="showNorthCambridge()" value="Show North Cambridge">
+          </form>
+        </div>
+        <div id="credits"><p>Coffee Shop Data from <a href="http://www.referenceusa.com/">ReferenceUSA</a><br>#webMapWorkshop - &copy;2015, Mike Foster</p></div>
+      </div>
+    </div>
+
+    <!-- include cartodb.js library -->
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script>
+    // Create Leaflet map object
+    var map = L.map('map',{ center: [42.381899, -71.122499], zoom: 13});
+
+    // Add Tile Layer basemap
+    L.tileLayer('http://tiles.mapc.org/basemap/{z}/{x}/{y}.png', {
+      attribution: 'Tiles by <a href="http://mapc.org">MAPC</a>, Data by <a href="http://mass.gov/mgis">MassGIS</a>',
+      maxZoom: 17,
+      minZoom: 9
+    }).addTo(map);
+
+    // Declare Variables
+    // variable to hold coffee shop locations
+    var coffeeShopLocations = null;
+    // variable to hold your location
+    var youAreHere = null;
+
+    // Database Queries
+    // Get all coffee cafes from dataset
+    var sqlQuery = "SELECT * FROM coffee_cafes";
+
+    // Set CartoDB Username
+    var cartoDBUserName = "mjfoster83";
+
+    // Get CartoDB selection as GeoJSON and Add to Map
+    function showAll(){
+      if(map.hasLayer(coffeeShopLocations)){
+        map.removeLayer(coffeeShopLocations);
+      };
+      map.setView(new L.LatLng(42.381899, -71.122499), 13);
+      $.getJSON("https://"+cartoDBUserName+".cartodb.com/api/v2/sql?format=GeoJSON&q="+sqlQuery, function(data) {
+        coffeeShopLocations = L.geoJson(data,{
+          onEachFeature: function (feature, layer) {
+            layer.bindPopup('<p><b>' + feature.properties.name + '</b><br /><em>' + feature.properties.address + '</em></p>');
+            layer.cartodb_id=feature.properties.cartodb_id;
+          }
+        }).addTo(map);
+      });
+    };
+
+    // Run showAll function automatically when document loads
+    $( document ).ready(function() {
+      showAll();
+    });
+
+    // Find coffee shops in North Cambridge
+
+    // Set up PostGIS SQL Query for North Cambridge
+    var north_cambridge_query = "SELECT dunkindonuts.name, dunkindonuts.the_geom FROM dunkindonuts, (SELECT * FROM cambridge_neighborhoods WHERE name = 'North Cambridge') AS dd_nc WHERE ST_Intersects(dunkindonuts.the_geom, dd_nc.the_geom)"
+
+    // Create function that will run query on click
+    // Get CartoDB selection as GeoJSON and Add to Map
+    function showNorthCambridge(){
+      if(map.hasLayer(coffeeShopLocations)){
+        map.removeLayer(coffeeShopLocations);
+      };
+      map.setView(new L.LatLng(42.381899, -71.122499), 13);
+      $.getJSON("https://"+cartoDBUserName+".cartodb.com/api/v2/sql?format=GeoJSON&q="+north_cambridge_query, function(data) {
+        coffeeShopLocations = L.geoJson(data,{
+          onEachFeature: function (feature, layer) {
+            layer.bindPopup('<p><b>' + feature.properties.name + '</b><br /><em>' + feature.properties.address + '</em></p>');
+            layer.cartodb_id=feature.properties.cartodb_id;
+          }
+        }).addTo(map);
+      });
+    };
+
+
+    </script>
+  </body>
+</html>

@@ -25,8 +25,9 @@
     </div>
 
     <!-- include cartodb.js library -->
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- include leaflet.js library -->
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
     // Create Leaflet map object
     var map = L.map('map',{ center: [42.381899, -71.122499], zoom: 13});
@@ -49,7 +50,7 @@
     var sqlQuery = "SELECT * FROM coffee_cafes";
 
     // Set CartoDB Username
-    var cartoDBUserName = "{your CartoDB Username}";  // <--- Put your CartoDB Username in quotes here
+    var cartoDBUserName = "mjfoster83";  // <--- Put your CartoDB Username in quotes here
 
     // Get CartoDB selection as GeoJSON and Add to Map
     function showAll(){
@@ -84,7 +85,8 @@
     // Set 'Your Location' icon
     var redIcon = L.icon({
       iconUrl: 'images/redIcon.png',
-      shadowUrl: 'images/marker-shadow.png'
+      shadowUrl: 'images/marker-shadow.png',
+      iconAnchor: [13, 41]
     });
 
     // Function that will locate the user when called
